@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 64625030}
   - component: {fileID: 64625031}
   m_Layer: 0
-  m_Name: Line
+  m_Name: Curve
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -308,4 +308,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1710080277
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1710080279}
+  - component: {fileID: 1710080278}
+  m_Layer: 0
+  m_Name: Spline
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1710080278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1710080277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 876480ae31f574329974f557119bbf7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  points:
+  - {x: 0.1320858, y: 0, z: -2.9803}
+  - {x: -4.6134486, y: 1.6171837, z: 2.2855263}
+  - {x: 1.9717832, y: 0, z: 1.6495609}
+  - {x: 6.4647512, y: 7.40158, z: -1.5620041}
+  - {x: 5.955474, y: 9.44839, z: 1.2655087}
+  - {x: 10.173824, y: 10.396561, z: 3.7501173}
+  - {x: 11.884221, y: 8.297711, z: 5.818907}
+  - {x: 23.490993, y: 15.56773, z: -2.3992062}
+  - {x: 18.105673, y: 11.189754, z: -7.8542194}
+  - {x: 23.407087, y: 10.670765, z: -2.450694}
+--- !u!4 &1710080279
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1710080277}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
