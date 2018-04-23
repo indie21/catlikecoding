@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class Game : MonoBehaviour
 {
-
     public Transform _prefeb;
     public KeyCode _createKey = KeyCode.C;
     public KeyCode _newGameKey = KeyCode.N;
