@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-public class Cube: MonoBehaviour
+public class RoundedCubeT : MonoBehaviour
 {
 
     public int xSize, ySize, zSize;
     private Mesh mesh;
     private Vector3[] vertices;
+    private Vector3[] normals;
 
     public int roundness;
 
@@ -32,37 +33,30 @@ public class Cube: MonoBehaviour
         int cornerVertices = 8;
         int edgeVertices = (xSize + ySize + zSize - 3) * 4;
         int faceVertices = ((xSize - 1) * (ySize - 1) +
-                           (xSize - 1) * (zSize - 1) +
+							(xSize - 1) * (zSize - 1) +
                            (ySize - 1) * (zSize - 1)) * 2;
 
         vertices = new Vector3[cornerVertices + edgeVertices + faceVertices];
+        normals = new Vector3[vertices.Length];
 
         int v = 0;
-
         for (int y = 0; y <= ySize; y++)
         {
             for (int x = 0; x <= xSize; x++)
             {
-                vertices[v++] = new Vector3(x, y, 0);
-                //yield return wait;
+                SetVertex(v++, x, y, 0);
             }
-
             for (int z = 1; z <= zSize; z++)
             {
-                vertices[v++] = new Vector3(xSize, y, z);
-                //yield return wait;
+                SetVertex(v++, xSize, y, z);
             }
-
             for (int x = xSize - 1; x >= 0; x--)
             {
-                vertices[v++] = new Vector3(x, y, zSize);
-                //yield return wait;
+                SetVertex(v++, x, y, zSize);
             }
-
             for (int z = zSize - 1; z > 0; z--)
             {
-                vertices[v++] = new Vector3(0, y, z);
-                //yield return wait;
+                SetVertex(v++, 0, y, z);
             }
         }
 
@@ -70,8 +64,7 @@ public class Cube: MonoBehaviour
         {
             for (int x = 1; x < xSize; x++)
             {
-                vertices[v++] = new Vector3(x, ySize, z);
-                //yield return wait;
+                SetVertex(v++, x, ySize, z);
             }
         }
 
@@ -79,38 +72,84 @@ public class Cube: MonoBehaviour
         {
             for (int x = 1; x < xSize; x++)
             {
-                vertices[v++] = new Vector3(x, 0, z);
-                //yield return wait;
+                SetVertex(v++, x, 0, z);
             }
         }
 
         //yield return wait;
 
         mesh.vertices = vertices;
+		mesh.normals = normals;
     }
+
+
+    private void SetVertex(int i, int x, int y, int z)
+    {
+		Vector3 inner = vertices[i] = new Vector3(x, y, z);
+
+		if (x < roundness) {
+			inner.x = roundness;
+		}
+		else if (x > xSize - roundness) {
+			inner.x = xSize - roundness;
+		}
+
+
+		if (y < roundness) {
+			inner.y = roundness;
+		}
+		else if (y > ySize - roundness) {
+			inner.y = ySize - roundness;
+		}
+
+		if (z < roundness) {
+			inner.z = roundness;
+		}
+		else if (z > zSize - roundness) {
+			inner.z = zSize - roundness;
+		}
+
+		normals[i] = (vertices[i] - inner).normalized;
+		vertices[i] = inner + normals[i] * roundness;
+
+    }
+
 
     private void CreateTriangles()
     {
         int quads = (xSize * ySize + xSize * zSize + ySize * zSize) * 2;
-        int[] triangles = new int[quads * 6];
+        //int[] triangles = new int[quads * 6];
 
-        int ring = (xSize + zSize) * 2;
-        int t = 0, v = 0;
+		int[] trianglesZ = new int[(xSize * ySize) * 12];
+		int[] trianglesX = new int[(ySize * zSize) * 12];
+		int[] trianglesY = new int[(xSize * zSize) * 12];
 
-        for (int y = 0; y < ySize; y++, v++)
-        {
+		int ring = (xSize + zSize) * 2;
+		int tZ = 0, tX = 0, tY = 0, v = 0;
 
-            for (int q = 0; q < ring - 1; q++, v++)
-            {
-                t = SetQuad(triangles, t, v, v + 1, v + ring, v + ring + 1);
-            }
+		for (int y = 0; y < ySize; y++, v++) {
+			for (int q = 0; q < xSize; q++, v++) {
+				tZ = SetQuad(trianglesZ, tZ, v, v + 1, v + ring, v + ring + 1);
+			}
+			for (int q = 0; q < zSize; q++, v++) {
+				tX = SetQuad(trianglesX, tX, v, v + 1, v + ring, v + ring + 1);
+			}
+			for (int q = 0; q < xSize; q++, v++) {
+				tZ = SetQuad(trianglesZ, tZ, v, v + 1, v + ring, v + ring + 1);
+			}
+			for (int q = 0; q < zSize - 1; q++, v++) {
+				tX = SetQuad(trianglesX, tX, v, v + 1, v + ring, v + ring + 1);
+			}
+			tX = SetQuad(trianglesX, tX, v, v - ring + 1, v + ring, v + 1);
+		}
 
-            t = SetQuad(triangles, t, v, v - ring + 1, v + ring, v + 1);
-        }
 
-        t = CreateTopFace(triangles, t, ring);
-        t = CreateBottomFace(triangles, t, ring);
-        mesh.triangles = triangles;
+        tY = CreateTopFace(trianglesY, tY, ring);
+        tY = CreateBottomFace(trianglesY, tY, ring);
+        mesh.subMeshCount = 3;
+		mesh.SetTriangles(trianglesZ,0);
+		mesh.SetTriangles(trianglesX,1);
+		mesh.SetTriangles(trianglesY,2);
     }
 
 
@@ -132,8 +171,9 @@ public class Cube: MonoBehaviour
             t = SetQuad(triangles, t, vMin, vMid, vMin - 1, vMid + xSize - 1);
             for (int x = 1; x < xSize - 1; x++, vMid++)
             {
-                t = SetQuad(triangles, t,
-							vMid, vMid + 1, vMid + xSize - 1, vMid + xSize);
+                t = SetQuad(
+                    triangles, t,
+                    vMid, vMid + 1, vMid + xSize - 1, vMid + xSize);
             }
             t = SetQuad(triangles, t, vMid, vMax, vMid + xSize - 1, vMax + 1);
         }
@@ -171,7 +211,8 @@ public class Cube: MonoBehaviour
             t = SetQuad(triangles, t, vMin, vMid + xSize - 1, vMin + 1, vMid);
             for (int x = 1; x < xSize - 1; x++, vMid++)
             {
-                t = SetQuad(triangles, t,
+                t = SetQuad(
+                    triangles, t,
                     vMid + xSize - 1, vMid + xSize, vMid, vMid + 1);
             }
             t = SetQuad(triangles, t, vMid + xSize - 1, vMax + 1, vMid, vMax);
@@ -204,10 +245,12 @@ public class Cube: MonoBehaviour
             return;
         }
 
-        Gizmos.color = Color.black;
         for (int i = 0; i < vertices.Length; i++)
         {
-            Gizmos.DrawSphere(vertices[i], 0.1f);
+            Gizmos.color = Color.black;
+			Gizmos.DrawSphere(vertices[i], 0.1f);
+			Gizmos.color = Color.yellow;
+			Gizmos.DrawRay(vertices[i], normals[i]);
         }
     }
 
