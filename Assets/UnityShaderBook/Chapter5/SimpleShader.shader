@@ -30,6 +30,7 @@ Shader "Custom/SimpleShader" {
             v2f vert(a2v v) {
                 v2f o;
                 o.pos = UnityObjectToClipPos(v.vertex);
+                // v.normal 包含了顶点的法线方向，其分量范围在[-1.0, 1.0]，下面的代码把分量范围映射到[0.0, 1.0]
                 o.color = v.normal *0.5 + fixed3(0.5,0.5,0.5);
 
                 return o;
