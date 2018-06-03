@@ -13,7 +13,6 @@ Shader "Custom/SimpleShader" {
             #pragma vertex vert
             #pragma fragment frag
 
-
             fixed4 _Color;
 
             struct a2v {
