@@ -37,6 +37,7 @@ Shader "Custom/Chapter6_SpecularPixelBlinnLevelMat" {
             };
 
             v2f vert(a2v v) {
+
                 v2f o;
                 // transform the vertex from object space to projection space
                 o.pos = UnityObjectToClipPos(v.vertex);
