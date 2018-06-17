@@ -56,14 +56,12 @@ Shader "Custom/Chapter6_SpecularPixelBlinnLevelMat" {
 
                 // Compute diffuse term
                 fixed3 diffuse = _LightColor0.rgb * _Diffuse.rgb * saturate(dot(worldNormal, worldLightDir));
-
                 // Get the reflect direction in world space
                 fixed3 reflectDir = normalize(reflect(-worldLightDir, worldNormal));
                 // Get the view direction in world space
                 fixed3 viewDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
                 // Get the half direction in world space
                 fixed3 halfDir = normalize(worldLightDir + viewDir);
-
                 // Compute specular term
 				        fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(max(0, dot(worldNormal, halfDir)), _Gloss);
 
