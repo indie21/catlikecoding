@@ -1,6 +1,6 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
-Shader "Custom/Chapter6_SpecularPixelLevelMat" {
+Shader "Custom/Chapter6_SpecularPixelBlinnLevelMat" {
 
     Properties {
         _Diffuse ("Diffuse", Color) = (1,1,1,1)
@@ -40,10 +40,8 @@ Shader "Custom/Chapter6_SpecularPixelLevelMat" {
                 v2f o;
                 // transform the vertex from object space to projection space
                 o.pos = UnityObjectToClipPos(v.vertex);
-
                 // transform the normal from object space to world space
                 o.worldNormal = normalize(mul(v.normal,(float3x3)unity_WorldToObject));
-
                 // Transform the vertex from object spacet to world space
                 o.worldPos = mul((float3x3)unity_ObjectToWorld, v.vertex).xyz;
 
@@ -63,8 +61,11 @@ Shader "Custom/Chapter6_SpecularPixelLevelMat" {
                 fixed3 reflectDir = normalize(reflect(-worldLightDir, worldNormal));
                 // Get the view direction in world space
                 fixed3 viewDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
+                // Get the half direction in world space
+                fixed3 halfDir = normalize(worldLightDir + viewDir);
+
                 // Compute specular term
-                fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(reflectDir, viewDir)), _Gloss);
+				        fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(max(0, dot(worldNormal, halfDir)), _Gloss);
 
                 return fixed4(ambient + diffuse + specular, 1.0);
 
