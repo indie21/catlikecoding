@@ -2,6 +2,7 @@
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
 Shader "Custom/Chapter7_SingletextShader" {
+
     Properties {
         _Color ("Color Tint", Color) = (1,1,1,1)
         _MainTex ("Main Tex", 2D) = "white" {}
@@ -40,6 +41,7 @@ Shader "Custom/Chapter7_SingletextShader" {
             };
 
             v2f vert(a2v v) {
+
                 v2f o;
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.worldNormal = UnityObjectToWorldNormal(v.normal);
@@ -48,6 +50,7 @@ Shader "Custom/Chapter7_SingletextShader" {
                 // or just call the built-in function
                 o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
                 return o;
+
             }
 
             fixed4 frag(v2f i): SV_Target {
